@@ -1,0 +1,26 @@
+body, html {
+	background-color: #8080ff;
+	text-align: center;
+	font-family: "Lucida Console", Monaco, monospace;
+	margin: 0;
+	padding: 0;
+	height: 100%;
+}
+
+.box {
+	color: #ffffff;
+	background-color: #000000;
+	height: 100%;
+	width: 600px;
+	display: block;
+	margin: 0 auto;
+}
+
+.box h1 {
+	margin: 0;
+	padding: 30px 0;
+}
+
+.box p {
+	margin-top: 30px;
+}
