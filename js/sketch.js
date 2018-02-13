@@ -2,19 +2,28 @@
 var canvasWidth = 1024;
 var canvasHeight = 768;
 
+var on = false;
+
 function setup() {
    // Create the canvas 
   createCanvas(canvasWidth, canvasHeight);
-   // Set canvas color to dark grey
-  background(50);
 }
 
 function draw() {
- 
+	var colorLight = color(255, 255, 255);
+	var colorDark = color(0,0,0);
+	var fillColor;
+
+	if(on){
+		fillColor=colorLight;
+	} else {
+		fillColor=colorDark;
+	}
+	  background(fillColor);
 
  	//set variables
- 	var fillColor = color(255, 255, 255);
  	var strokeColor = color(0, 0, 0);
+ 	var strokeSoft = color(128, 128, 255);
  	var strokeWidth = 10;
  	strokeWeight(strokeWidth); 
 
@@ -28,7 +37,33 @@ function draw() {
 		var height = 200;
 		//move x y coordinates to center of rechtangle
 		translate(-width/2, -height/2);
-		rect(x, y, width, height, 10);
+		rect(x, y, width, height, 1);
+		pop(); // Restore original state
+	}
+	// function to draw the button 
+	function pattern(x, y) {
+		push(); // Start a new drawing state
+		fill(128, 128, 255, 10);
+		stroke(strokeSoft);
+		var width = 100;
+		var height = 100;
+		//move x y coordinates to center of rechtangle
+		translate(-width/2, -height/2);
+		//create button pattern
+		for (var i = 0; i < 10; i ++) {
+			rect(x, y, width, height, 0);
+			rotate(PI/5);
+		}
+		var width = 150;
+		var height = 150;
+		translate(-width/2+0, -height/2);
+		fill(255, 255, 255);
+		rect(x, y, width, height);
+		fill(0, 0, 0);
+		noStroke();
+		textSize(32);
+		fill(0, 0, 0);
+		text(' Click ! ', 25, 87);
 		pop(); // Restore original state
 	}
 
@@ -86,6 +121,21 @@ function draw() {
 		triangle(x-width/2,y,x+width/2,y,x,y+width*2);
 		pop(); // Restore original state
 	}
+	// function to draw the eyes
+	function eye(x, y, dia){
+        push();
+        strokeWeight(dia/10);
+        fill(255,255,255);
+        stroke(0,0,0);
+        ellipse(x, y, dia, dia);
+        fill(0,0,0);
+        translate(
+            max(-dia/6, min(dia/6, mouseX-x)),
+            max(-dia/6, min(dia/6, mouseY-y)));
+        ellipse(x, y, dia/2, dia/2);
+        pop();
+    }
+
 
  	// draw robot character
 	push(); // Start a new drawing state
@@ -98,4 +148,18 @@ function draw() {
 	head(0, -100, fillColor);
 	nose(0, -180, fillColor);
 	pop(); // Restore original state
+
+	push(); // Start a new drawing state
+	translate(canvasWidth-150, 10+canvasHeight/2);
+	pattern(0,0);
+	pop(); // Restore original state
+
+	eye(-20+canvasWidth/2, -200+canvasHeight/2, 35);
+    eye(20+canvasWidth/2, -200+canvasHeight/2, 35);
+
+}
+
+//new function for mouse event
+function mousePressed(){
+	on = !on;
 }
