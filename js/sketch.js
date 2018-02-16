@@ -1,11 +1,11 @@
 
 //define varialbles for canvas
-var canvasWidth = 1024;
-var canvasHeight = 768;
+let canvasWidth = 1024;
+let canvasHeight = 768;
 
 //define variables for object rotation
-var on = false;
-var rotation = 0.1;
+let on = false;
+let rotation = 0.1;
 
 //create the canvas 
 function setup() {
@@ -19,9 +19,9 @@ function mousePressed(){
 
 //define drawing function
 function draw() {
-	var colorLight = color(255, 255, 255);
-	var colorDark = color(0,0,0);
-	var fillColor;
+	let colorLight = color(255, 255, 255);
+	let colorDark = color(0,0,0);
+	let fillColor;
 
 	//conditional for changing background color on mouse event
 	if(on){
@@ -32,24 +32,25 @@ function draw() {
 	  background(fillColor);
 
  	//set drawing variables
- 	var strokeColor = color(0, 0, 0);
- 	var strokeSoft = color(111, 95, 209);
- 	var strokeWidth = 10;
+ 	let strokeColor = color(0, 0, 0);
+ 	let strokeSoft = color(111, 95, 209);
+ 	let strokeWidth = 10;
  	strokeWeight(strokeWidth); 
 
 	// function to draw the button 
-	function button(x, y) {
+	function button() {
 		push(); // start a new drawing state
 		//set color and object transparency
 		fill(128, 128, 255, 80);
 		stroke(strokeSoft);
+		//using let does not properly work, using var for width and height
 		var width = 100;
 		var height = 100;
 		//move x y coordinates to center of rechtangle
 		translate(-width/2, -height/2);
 		//create button pattern using a for loop
-		for (var i = 0; i < 10; i ++) {
-			rect(x, y, width, height, 5);
+		for (let i = 0; i < 10; i ++) {
+			rect(0, 0, width, height, 5);
 			rotate(PI/5);
 		}
 		//create button top surface
@@ -57,7 +58,7 @@ function draw() {
 		var height = 150;
 		translate(-width/2+0, -height/2);
 		fill(255, 255, 255);
-		rect(x, y, width, height);
+		rect(0, 0, width, height);
 		fill(0, 0, 0);
 		noStroke();
 		//add button text
@@ -138,10 +139,12 @@ function draw() {
 	// function to draw the eyes and set the follow mouse event
 	function eye(x, y, dia){
         push();
+        //eyeball area
         strokeWeight(dia/10);
         fill(255,255,255);
         stroke(0,0,0);
         ellipse(x, y, dia, dia);
+        //black eyeball follows the mouse, but remains in the eyeball area
         fill(0,0,0);
         translate(
             max(-dia/6, min(dia/6, mouseX-x)),
@@ -159,7 +162,7 @@ function draw() {
 	rotation = 0.01+rotation;
     strokeWeight(strokeWidth-5); 
     // create windmill top pattern using vertex shapes with no fill
-    for (var i = 0; i < 100; i ++) {
+    for (let i = 0; i < 100; i ++) {
 	    noFill();
 	    beginShape();
 		vertex(x+30, y+20);
@@ -172,7 +175,7 @@ function draw() {
  	push(); // start a new drawing state
  	// create windmill top detail using vertex points
  		stroke(strokeSoft);
-    for (var i = 0; i < 100; i ++) {
+    for (let i = 0; i < 100; i ++) {
 	    beginShape(POINTS);
 		vertex(x, y-10);
 		vertex(x+55, y-10);
@@ -213,13 +216,13 @@ function draw() {
 	pop(); // restore original state
 
 	//call the function to draw the eyes
-	eye(-20+canvasWidth/2, -200+canvasHeight/2, 35);
-    eye(20+canvasWidth/2, -200+canvasHeight/2, 35);
+	eye(canvasWidth/2-20, canvasHeight/2-200, 35);
+    eye(canvasWidth/2+20, canvasHeight/2-200, 35);
 
 	//call the function to draw and position the button
 	push(); // start a new drawing state
-	translate(canvasWidth-150, 10+canvasHeight/2);
-	button(0,0);
+	translate(canvasWidth-150, canvasHeight/2+10);
+	button();
 	pop(); // restore original state
 
 }
