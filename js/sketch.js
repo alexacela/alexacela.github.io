@@ -16,6 +16,26 @@ function setup() {
 function mousePressed(){
 	on = !on;
 }
+//declaring a custom function for a square shape to move at different speeds according to the mouse horizontal position
+function Follower(size, speed, y) {
+	this.x = 0;
+	this.size = size;
+	this.speed = speed;
+	this.y = y;
+	this.draw = function() {
+		push();
+		this.x = this.speed * mouseX + (1 - this.speed) * this.x;
+		fill(0, 0, 0);
+		rect(this.x, this.y, this.size, this.size);
+		pop();
+	}
+}
+
+//instantiate the squares that follows mouse horizontaly on the lower canvas like moving pebblles 
+let pebble1 = new Follower(10,.1,600);
+let pebble2 = new Follower(15,.15,620);
+let pebble3 = new Follower(20,.25,640);
+
 
 //define drawing function
 function draw() {
@@ -222,6 +242,10 @@ function draw() {
 
  	// call the functions to draw the image robot, the windmill and the ground
  	line(0, 600, canvasWidth, 600);
+ 	//call the horizontal moving pebbles on the lower side of canvas
+	pebble1.draw();
+	pebble2.draw();
+	pebble3.draw();
 	push(); // start a new drawing state
 	translate(canvasWidth/2, canvasHeight/2);
 	body(0, 0, fillColor);
@@ -244,5 +268,6 @@ function draw() {
 	translate(canvasWidth-150, canvasHeight/2+10);
 	button();
 	pop(); // restore original state
+
 }
 
