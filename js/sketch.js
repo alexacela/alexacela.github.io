@@ -12,7 +12,7 @@ function setup() {
   createCanvas(canvasWidth, canvasHeight);
 }
 
-//new function for mouse event
+//function for mouse event
 function mousePressed(){
 	on = !on;
 }
@@ -37,34 +37,54 @@ function draw() {
  	let strokeWidth = 10;
  	strokeWeight(strokeWidth); 
 
-	// function to draw the button 
+
+
+	// transparent button 
 	function button() {
+		//instantiate the button transparent section as object with properties
+		let section = {
+			width: 100,
+			height: 100, 
+			corner: 5,
+			fColor: color(128,128,225,80),
+			stColor: strokeSoft 
+		};
 		push(); // start a new drawing state
-		//set color and object transparency
-		fill(128, 128, 255, 80);
-		stroke(strokeSoft);
-		//using let does not properly work, using var for width and height
-		var width = 100;
-		var height = 100;
+		fill(section.fColor);
+		stroke(section.stColor);
+
 		//move x y coordinates to center of rechtangle
-		translate(-width/2, -height/2);
+		translate(-section.width/2, -section.height/2);
 		//create button pattern using a for loop
 		for (let i = 0; i < 10; i ++) {
-			rect(0, 0, width, height, 5);
+			rect(0, 0, section.width, section.height, section.corner);
 			rotate(PI/5);
 		}
-		//create button top surface
-		var width = 150;
-		var height = 150;
-		translate(-width/2+0, -height/2);
-		fill(255, 255, 255);
-		rect(0, 0, width, height);
-		fill(0, 0, 0);
+		//instantiate the button non-transparent top surface
+		let surface = {
+			width: 150,
+			height: 150,
+			corner: 5,
+			fColor: colorLight,
+			stColor: strokeSoft
+		};
+		fill(surface.fColor);
+		stroke(surface.stColor);
+		//move x y coordinates to center of surface
+		translate(-surface.width/2+0, -surface.height/2); 
+		rect(0, 0, surface.width, surface.height, surface.corner);
+
+
+		//instantiate the button text
+		let label = {
+			size: 32,
+			fColor: colorDark,
+			text: ' Click! '
+		}
+		fill(label.fColor);
 		noStroke();
-		//add button text
-		textSize(32);
-		fill(0, 0, 0);
-		text(' Click ! ', 25, 87);
+		textSize(label.size);
+		text(label.text, 25, 87);
 		pop(); // restore original state
 	}
 
@@ -224,6 +244,5 @@ function draw() {
 	translate(canvasWidth-150, canvasHeight/2+10);
 	button();
 	pop(); // restore original state
-
 }
 
