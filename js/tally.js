@@ -41,12 +41,12 @@ function draw() {
 	clear();
 	background(0);
 	//set the color the same as the site's background
-	stroke(60,58,112);
-	strokeWeight(1);
+	stroke(190);
+	strokeWeight(2);
 	textSize(50);
 	fill(60,58,112);
 	// display the number of clicks
-	text(countMouse, canvasWidth-100, canvasHeight-30);
+	text(countMouse, canvasWidth-1000, canvasHeight-715);
 
 	//compute how many groups we have
 	let groups = int(countMouse / groupLength);

@@ -46,7 +46,7 @@ function draw() {
 
 	//clock hour in 12h format
 	push();
-	rotate(2*PI*((h%12)/12 + m/720 + s/43200));
+	rotate(2*PI*(h/12 + m/720 + s/43200));
 	rect(-handWidth/2, -hourLength, handWidth, hourLength);
 	pop(); // restore original state
 
