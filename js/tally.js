@@ -36,7 +36,7 @@ function keyPressed() {
 }
 
 
-//define drawing function
+//drawing function
 function draw() {
 	clear();
 	background(0);
@@ -60,7 +60,7 @@ function draw() {
 	if (remainder > 0) {
 		rows = rows + 1;
 	}
-	//draw the Tally lines using nested for loops
+	//draw the Tally lines using nested loops
 	strokeWeight(5);
 	for (let r = 0; r < rows; r++) {
 		let rowLimit = rowLenght;
