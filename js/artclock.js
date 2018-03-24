@@ -16,6 +16,7 @@ function draw() {
   strokeWeight(2);
   fill(60,58,112);
 
+//variables for the counting
   let h = hour();
   let m = minute();
   let s = second();
@@ -53,7 +54,7 @@ function draw() {
       fill(off);
     }
     rect(0, 0, size, size);
-    pop();
+    pop(); 
   }
 
     //seconds
@@ -68,9 +69,20 @@ function draw() {
     rect(0, 0, size, size);
     pop();
   }
-
     pop();
 
+  //design top white and gray squares
+  for (let i = 0; i<10; i++) {
+    push();
+    translate(i*size+10, size-50);
+    fill(on);
+    if (i%3==0) {
+      fill(off);
+    }
+    rect(0, 0, size, size);
+    pop();
+  }
 
+ 
 
 }
