@@ -13,13 +13,10 @@ function setup() {
 //Requirement: accept a file into the DOM and/or sketch via drag / drop
   dropzone = select("#dropZone");
   dropzone.drop(gotFile).dragOver(highlight).dragLeave(unhighlight);
-  // dropzone.dragLeave(unhighlight);
-  // dropzone.drop(gotFile);
 }
 
 
 function highlight(evt) {
-  console.log("batman");
   if (dropzone.class().search("highlight")<0){
     dropzone.addClass("highlight");
   }
@@ -27,7 +24,6 @@ function highlight(evt) {
 }
 
 function unhighlight() {
-  console.log("testing this feature");
   dropzone.removeClass("highlight");
 }
 
