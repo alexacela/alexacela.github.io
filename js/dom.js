@@ -7,7 +7,10 @@ function setup() {
 //Requirement: full-screen P5 sketch running as a background canvas behind web page elements
   let canvas = createCanvas(windowWidth, windowHeight);
 
+//Requirement: position() an element on the page using P5
   canvas.position(0,0);
+
+//Requirement: style() a DOM element with CSS from within P5
   canvas.style("z-index", "-1");
 
 //Requirement: accept a file into the DOM and/or sketch via drag / drop
@@ -29,34 +32,46 @@ function unhighlight() {
 
 
 function gotFile (file) {
-  let img = createImg(file.data);
-  img.size(150, 150);
   unhighlight();
+  this.file = file;
+  //Requirement: create an element BESIDES a canvas element using P5
+  this.img = createImg(file.data);
+  this.img.size(150, 150);
+
+  //Requirement: element-specific event handler and callback function
+  this.img.mousePressed(function(){
+    console.log(this.file.name + " pressed");
+    collector = new Follower(size, speed, this.img);
+    this.img.remove();
+  }.bind(this));
 }
 
 //object following mouse
-function Follower(size, speed) {
+function Follower(size, speed, img=null) {
   this.x = 0;
   this.size = size;
   this.speed = speed;
   this.y = 0;
   this.draw = function() {
-    push();
-    this.x = this.speed * mouseX + (1 - this.speed) * this.x;
-    this.y = this.speed * mouseY + (1 - this.speed) * this.y;
-    fill(111, 95, 209);
-    rect(this.x, this.y, this.size, this.size);
-    pop();
-  }
+    if(img){
+      this.x = this.speed * mouseX + (1 - this.speed) * this.x;
+      this.y = this.speed * mouseY + (1 - this.speed) * this.y;
+      image(img, this.x, this.y);
+    }
+  };
 }
 
-//declare object that follows mouse 
-let collector = new Follower(20,.05);
+//declare object that follows mouse
+let speed = 0.05;
+let size = 50;
+let collector = new Follower(50,.05);
+
+
+
 
 //drawing function
 function draw() {
   background(0);
-  fill(60,58,112);
   collector.draw();
 
 }
