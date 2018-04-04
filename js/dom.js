@@ -15,6 +15,9 @@ function setup() {
 
 //Requirement: accept a file into the DOM and/or sketch via drag / drop
   dropzone = select("#dropZone");
+// citation: initial idea from from Dan Shiffman p5js drag & drop file tutorial, but modified 
+// to include adaptation from user GoToLoop on Processing.org forum. Details at link below:
+// https://forum.processing.org/two/discussion/24750/p5js-drag-n-drop-hover-not-working-why
   dropzone.drop(gotFile).dragOver(highlight).dragLeave(unhighlight);
 }
 
