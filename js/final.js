@@ -6,6 +6,7 @@
 
 //define variables
 let dropzone;
+let scoreHtml;
 
 //create the canvas 
 function setup() {
@@ -25,6 +26,7 @@ function setup() {
 // to include adaptation from user GoToLoop on Processing.org forum. Details at link below:
 // https://forum.processing.org/two/discussion/24750/p5js-drag-n-drop-hover-not-working-why
   dropzone.drop(gotFile).dragOver(highlight).dragLeave(unhighlight);
+  scoreHtml = select("#score");
 }
 
 //give the current number of milliseconds
@@ -65,13 +67,59 @@ function Follower(size, speed, img=null) {
   this.size = size;
   this.speed = speed;
   this.y = 0;
+  this.points = 0;
   this.draw = function() {
+    this.x = Math.round(this.speed * mouseX + (1 - this.speed) * this.x);
+    this.y = Math.round(this.speed * mouseY + (1 - this.speed) * this.y);
+  
     if(img){
-      this.x = Math.round(this.speed * mouseX + (1 - this.speed) * this.x);
-      this.y = Math.round(this.speed * mouseY + (1 - this.speed) * this.y);
       image(img, this.x, this.y, this.size, this.size);
     }
   };
+
+  this.touches = function(pos, size) {
+    // console.log("item coord: " + pos)
+    touchX = (this.x + size >= pos[0]) & (this.x <= pos[0] + size);
+    touchY = (this.y + size >= pos[1]) & (this.y <= pos[1] + size);
+    // console.log("item coord: " + pos + " touchX: " + touchX + "touchY: " + touchY)
+    return touchX & touchY;
+  }
+
+  this.collect = function(item) {
+    if (typeof item !== 'undefined'){
+      let pos = item.getPos();
+      let size = item.getSize();
+      let points = item.getPoints();
+      if (this.touches(pos, size)) {
+        this.points += points;
+        item.collect();
+      }
+    }
+  }
+}
+
+//level object
+function Level(duration, pointTh){
+  this.dur = duration * 1000; //store in milisec so it works with now()
+  this.pointTh = pointTh;
+  this.startTime = now();
+  // know how much time is left
+  this.getTimeRemaining = function() {
+    let remaining = this.dur - (now() - this.startTime);
+    if (remaining < 0) {
+      return 0; 
+    } else {
+      return remaining;
+    }
+  }
+  //win or lose
+  this.getWin = function(points) {
+    if (this.getTimeRemaining() < 0) {
+      return points >= this.pointTh;
+    } else {
+      return false;
+    }
+  }
 }
 
 //objects that appear
@@ -85,15 +133,39 @@ function Item(){
   //probability to display
   let typeSelection = [0,0,1,1,2];
   this.typeInd = typeSelection[Math.round(Math.random()*(typeSelection.length-1))];
-  console.log("New item made" + this.typeInd);
+  // console.log("New item made" + this.typeInd);
   
   this.attr = this.types[this.typeInd];
-  this.visible = true;
+  this.done = false;
   this.deadline = now() + this.attr.duration*1000;
   //draw shape at random position
   this.x = Math.floor(Math.random() * (width-this.attr.size));
   this.y = Math.floor(Math.random() * (height-this.attr.size));
  
+ //get  size and position of item
+  this.getSize = function() {
+    return this.attr.size;
+  }
+
+  this.getPoints = function() {
+    return this.attr.points;
+  }
+
+  this.getPos = function() {
+    return [this.x, this.y];
+  }
+
+  this.isDone = function() {
+    if (!this.done) {
+      this.done = now() > this.deadline;
+    }
+    return this.done;
+  }
+
+  this.collect = function() {
+    this.done = true;
+  }
+
   this.draw = function() {
     //console.log("image at " + this.x + ", " + this.y);
     let img = createImg("img/" + this.attr.image);
@@ -114,7 +186,7 @@ function Item(){
 //declare object that follows mouse and objects that appear randomly
 let speed = 0.05;
 let size = 50;
-let maxItems = 15;
+let maxItems = 2;
 let collector = new Follower(50,.05);
 let collectibles = [];
 
@@ -123,16 +195,22 @@ let collectibles = [];
 function draw() {
   background(50);
   collector.draw();
+  //draws the items and keeps drawing till enough items
   if (collectibles.length < maxItems){
     collectibles.push(new Item())
   }
   for(i in collectibles) {
-    if(collectibles[i].deadline < now()) {
+    //erases expired items
+    if(collectibles[i].isDone()) {
       collectibles.splice(i, 1);
     };
-    collectibles[i].draw();
+    collector.collect(collectibles[i]);
+    if(typeof collectibles[i] !== 'undefined'){
+       collectibles[i].draw();   
+     }
   }
-
+// console.log("points: " + collector.points);
+  scoreHtml.html(collector.points);
 }
 
 function windowResized() {
