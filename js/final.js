@@ -7,26 +7,40 @@
 //define variables
 let dropzone;
 let scoreHtml;
+let timeHtml;
+let levelHtml;
+let winHtml; 
+let loseHtml;
+let levelTotalHtml;
+let scoreTotalHtml;
 
 //create the canvas 
 function setup() {
 
-//Requirement: full-screen P5 sketch running as a background canvas behind web page elements
+//full-screen P5 sketch running as a background canvas behind web page elements
   let canvas = createCanvas(windowWidth, windowHeight);
 
-//Requirement: position() an element on the page using P5
+//position() an element on the page using P5
   canvas.position(0,0);
 
-//Requirement: style() a DOM element with CSS from within P5
+//style() a DOM element with CSS from within P5
   canvas.style("z-index", "-1");
 
-//Requirement: accept a file into the DOM and/or sketch via drag / drop
+//accept a file into the DOM and/or sketch via drag / drop
   dropzone = select("#dropZone");
 // citation: initial idea from from Dan Shiffman p5js drag & drop file tutorial, but modified 
 // to include adaptation from user GoToLoop on Processing.org forum. Details at link below:
 // https://forum.processing.org/two/discussion/24750/p5js-drag-n-drop-hover-not-working-why
   dropzone.drop(gotFile).dragOver(highlight).dragLeave(unhighlight);
   scoreHtml = select("#score");
+  timeHtml = select("#time");
+  levelHtml = select("#level");
+  winHtml = select("#win");
+  loseHtml = select("#lose");
+  levelTotalHtml = select("#levelTotal");
+  scoreTotalHtml = select("#scoreTotal");
+  winHtml.hide();
+  loseHtml.hide();
 }
 
 //give the current number of milliseconds
@@ -49,11 +63,11 @@ function unhighlight() {
 function gotFile (file) {
   unhighlight();
   this.file = file;
-  //Requirement: create an element BESIDES a canvas element using P5
+  //create an element BESIDES a canvas element using P5
   this.img = createImg(file.data);
-  this.img.size(150, 150);
+  // this.img.size(150, 150);
 
-  //Requirement: element-specific event handler and callback function
+  //element-specific event handler and callback function
   this.img.mousePressed(function(){
     console.log(this.file.name + " pressed");
     collector = new Follower(size, speed, this.img);
@@ -61,7 +75,7 @@ function gotFile (file) {
   }.bind(this));
 }
 
-//object following mouse
+//avatar object following mouse
 function Follower(size, speed, img=null) {
   this.x = 0;
   this.size = size;
@@ -74,6 +88,8 @@ function Follower(size, speed, img=null) {
   
     if(img){
       image(img, this.x, this.y, this.size, this.size);
+    } else {
+      mouseDecor(this.x, this.y, this.size);
     }
   };
 
@@ -98,6 +114,22 @@ function Follower(size, speed, img=null) {
   }
 }
 
+// transparent avater mouse decoration 
+function mouseDecor(x, y, size) {
+  let corner = 5;
+  let width = size / corner;
+  let height = size / corner;
+  fill(color(128,128,225,80));
+
+  //move x y coordinates to center of rechtangle
+  translate(x, y);
+  //create avatar mouse decoration pattern using a for loop
+  for (let i = 0; i < corner; i ++) {
+    rect(0, 0, width, height, corner);
+    rotate(PI/(corner/2));
+  }
+ }
+
 //level object
 function Level(duration, pointTh){
   this.dur = duration * 1000; //store in milisec so it works with now()
@@ -114,11 +146,14 @@ function Level(duration, pointTh){
   }
   //win or lose
   this.getWin = function(points) {
-    if (this.getTimeRemaining() < 0) {
+    if (this.getTimeRemaining() > 0) {
       return points >= this.pointTh;
-    } else {
-      return false;
     }
+    return false;
+  }
+
+  this.getPointTh = function() {
+    return this.pointTh;
   }
 }
 
@@ -186,21 +221,24 @@ function Item(){
 //declare object that follows mouse and objects that appear randomly
 let speed = 0.05;
 let size = 50;
-let maxItems = 2;
-let collector = new Follower(50,.05);
+let maxItems = 10;
+let maxPoints = 20;
+let maxLevels = 4;
+let curLevel = 0;
+let collector = new Follower(50, 0.05);
+let level = new Level(60, maxPoints);
 let collectibles = [];
 
 
 //drawing function
 function draw() {
   background(50);
-  collector.draw();
-  //draws the items and keeps drawing till enough items
-  if (collectibles.length < maxItems){
+  //draw the items and keeps drawing till enough items
+  if (collectibles.length < maxItems) {
     collectibles.push(new Item())
   }
   for(i in collectibles) {
-    //erases expired items
+    //erase expired items
     if(collectibles[i].isDone()) {
       collectibles.splice(i, 1);
     };
@@ -209,8 +247,30 @@ function draw() {
        collectibles[i].draw();   
      }
   }
-// console.log("points: " + collector.points);
+  collector.draw();
+
+  //display UI
+  levelTotalHtml.html(maxLevels + 1);
+  levelHtml.html(curLevel + 1);
+  scoreTotalHtml.html(level.getPointTh());
   scoreHtml.html(collector.points);
+  timeHtml.html(int(level.getTimeRemaining()/1000));
+
+  //game Logic
+  if (level.getWin(collector.points)) {
+    if (curLevel < maxLevels) {
+      curLevel++;
+      level = new Level(60, maxPoints * 2 * curLevel);
+    } else {
+      winHtml.show();
+      noLoop();  
+    }
+  } else {
+    if (level.getTimeRemaining() <= 0) {
+      loseHtml.show();
+      noLoop();
+    }
+  }
 }
 
 function windowResized() {

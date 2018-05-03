@@ -10,6 +10,7 @@ body, html {
 .cleanBody {
 	height: unset;
 	background-color: unset;
+	overflow: hidden;
 }
 
 .box {
