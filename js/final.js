@@ -65,7 +65,6 @@ function gotFile (file) {
   this.file = file;
   //create an element BESIDES a canvas element using P5
   this.img = createImg(file.data);
-  // this.img.size(150, 150);
 
   //element-specific event handler and callback function
   this.img.mousePressed(function(){
@@ -168,7 +167,6 @@ function Item(){
   //probability to display
   let typeSelection = [0,0,1,1,2];
   this.typeInd = typeSelection[Math.round(Math.random()*(typeSelection.length-1))];
-  // console.log("New item made" + this.typeInd);
   
   this.attr = this.types[this.typeInd];
   this.done = false;
@@ -202,19 +200,9 @@ function Item(){
   }
 
   this.draw = function() {
-    //console.log("image at " + this.x + ", " + this.y);
     let img = createImg("img/" + this.attr.image);
     img.hide();
     image(img, this.x, this.y, this.attr.size, this.attr.size);
-    // loadImage("img/" + this.attr.image, function(img){
-    //   console.log("Image loaded here");
-    //   console.log(img);
-    //   image(img, this.x, this.y);      
-    // }.bind(this), function(err){
-    //   console.log("Error loading Image");
-    //   console.log(err);
-    // });
-    // rect(this.x, this.y, this.attr.size, this.attr.size);
   };
 }
 
